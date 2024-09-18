@@ -14,3 +14,16 @@ export const login: RequestHandler = (req, res) => {
     }
     res.status(403).json({error: 'access denied'})
 }
+
+export const validate: RequestHandler = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if(!authHeader){
+        return res.status(403).json({error: 'access denied'})
+    }
+
+    const token = authHeader.split(' ')[1];
+    if(!auth.validateToken(token)){
+        return res.status(403).json({error: 'access denied'})
+    }
+    next()
+}
