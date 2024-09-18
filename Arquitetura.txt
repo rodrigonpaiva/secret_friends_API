@@ -1,0 +1,69 @@
+API - Amigo Secreto
+
+Painel de administraçao:
+- Cadastrar EVENTOS
+- Cadastrar Grupos
+- Cadastrar Pessoas
+
+Site:
+- Acessar tela do EVENTOS
+
+
+Caracteristicas:
+- O Sorteio contece na hora do Cadastro, nao na hora de identificaçao.
+- O painel de administraçao vai ter senha unica.
+- No banco de dados, nao podemos identificar quem tirou quem.
+
+
+PLANEJAMENTO DE BANCO DE DADOS:
+
+- EVENTOS
+- GRUPOS
+- PESSOAS
+
+
+EVENTS
+- id INT PK AUTO_INCREMENT
+- status BOOLEAN default=false
+- title STRING
+- description STRING
+- grouped BOOLEAN  default=false
+
+eventGroups
+- id INT PK AUTO_INCREMENT
+- id_event INT (RELACIONADO a events.id)
+- name STRING
+
+eventPeople
+- id INT PK AUTO_INCREMENT
+- id_event INT (RELACIONADO a events.id)
+- id_group INT (RELACIONADO a eventGroups.id)
+- name STRING
+- email STRING
+- matched STRING default=""
+
+
+PLANEJAMENTO DE ROTAS:
+
+- POST /admin/login
+
+- GET /admin/events
+- GET /admin/events/:id
+- POST /admin/events
+- PUT /admin/events/:id
+- DELETE /admin/events/:id
+
+- GET /admin/events/:id_event/groups
+- GET /admin/events/:id_event/groups/:id
+- POST /admin/events/:id_event/groups
+- PUT /admin/events/:id_event/groups/:id
+- DELETE /admin/events/:id_event/groups/:id
+
+- GET  /admin/events/:id_event/groups/:id_group/people
+- GET /admin/events/:id_event/groups/:id_group/people/:id
+- POST /admin/events/:id_event/groups/:id_group/people
+- PUT /admin/events/:id_event/groups/:id_group/people/:id
+- DELETE /admin/events/:id_event/groups/:id_group/people/:id
+
+- GET /events/:id
+- GET /events/:id_event/person?email=rodi@
