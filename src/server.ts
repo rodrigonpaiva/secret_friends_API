@@ -28,6 +28,7 @@ const runServer = (port: number, server: http.Server | https.Server) => {
 const regularServer = http.createServer(app);
 if(process.env.NODE_ENV === 'production') {
     
+    
 }else{
     const serverPort: number = process.env.PORT ? parseInt(process.env.PORT) : 9000;
     runServer(serverPort, regularServer);

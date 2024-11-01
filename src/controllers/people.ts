@@ -1,6 +1,8 @@
 import { RequestHandler } from "express";
 import * as people from '../services/people'
 import { z } from "zod";
+import { error } from "console";
+import { decryptMatch } from "../utils/match";
 
 export const getAll: RequestHandler = async (req, res) => {
     const {id_event, id_group} = req.params;
@@ -88,4 +90,42 @@ export const deletePerson: RequestHandler = async (req, res) => {
     if (deletedPerson) return res.json({ person: deletedPerson });
 
     res.json({error: 'Houston, we have a problem!!!'});
+}
+
+export const searchPerson: RequestHandler = async (req, res) => {
+    const { id_event } = req.params;
+
+    const searchPersonSchema = z.object({
+        email: z.string().email()
+    });
+    const query = searchPersonSchema.safeParse(req.query);
+    if(!query.success) return res.json({ error: 'Invalid data' });
+
+    const personItem = await people.getPerson({
+        email: query.data.email,
+        id_event: parseInt(id_event)
+    });
+    if(personItem && personItem.matched){
+        const matchId = decryptMatch(personItem.matched);
+
+        const personMatched = await people.getPerson({
+            id: matchId,
+            id_event: parseInt(id_event)
+        });
+
+        if(personMatched){ 
+            return res.json({ 
+                person: {
+                    id: personItem.id,
+                    name: personItem.name
+                },
+                personMatched: {
+                    id: personMatched.id,
+                    name: personMatched.name
+                }  
+            })
+        };
+    } 
+    
+    res.json({ error: 'Person not found' });
 }

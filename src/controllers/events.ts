@@ -47,10 +47,10 @@ export const updateEvent: RequestHandler = async (req, res) => {
     const body = updateEventSchema.safeParse(req.body);
     if(!body.success) return res.json({error: 'Invalid data'});
 
-    const updateEvent = await events.update(parseInt(id), body.data);
-    if(updateEvent){
-        if(updateEvent.status){
-            const result = await events.doMatch(parseInt(id));
+    const updatedEvent = await events.update(parseInt(id), body.data);
+    if(updatedEvent) {
+        if(updatedEvent.status){
+            const result = await events.doMatches(parseInt(id));
             if(!result) {
                 return res.json({error: 'Groups impossible to draw.'});
             }
@@ -58,7 +58,7 @@ export const updateEvent: RequestHandler = async (req, res) => {
             await people.update({id_event: parseInt(id)}, {matched: ''});
         }
 
-        return res.json({event: updateEvent});
+        return res.json({ event: updatedEvent });
     };
 
     res.json({error: 'Houston, we have a problem!!!'})
