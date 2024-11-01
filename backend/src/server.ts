@@ -3,6 +3,7 @@ import express from 'express';
 import  cors from 'cors';
 import https  from 'https';
 import http from 'http';
+import fs from 'fs';
 import siteRoutes  from './routes/site';
 import adminRoutes from  './routes/admin';
 import { requestItercepter } from './utils/requestIntercepter';
@@ -27,8 +28,14 @@ const runServer = (port: number, server: http.Server | https.Server) => {
 
 const regularServer = http.createServer(app);
 if(process.env.NODE_ENV === 'production') {
-    
-    
+    const options = {
+        key: fs.readFileSync(process.env.SSL_KEY as string),
+        cert: fs.readFileSync(process.env.SSL_CERT as string)
+    }
+
+    const secureServer = https.createServer(options, app);
+    runServer(80, regularServer);
+    runServer(443, secureServer);
 }else{
     const serverPort: number = process.env.PORT ? parseInt(process.env.PORT) : 9000;
     runServer(serverPort, regularServer);
